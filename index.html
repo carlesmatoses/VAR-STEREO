@@ -11,6 +11,7 @@
 	"L" See from Left Eye | "R" See from Right Eye | "S" toggle show scene | "A" add obj to scene  <br />
 </div>
 <input type="file" id="fileInput" accept=".obj" style="display: none;" />
+<input type="file" id="fileInputTexture" accept=".mtl" style="display: none;" />
 
 <!-- Check: https://threejs.org/docs/index.html#manual/en/introduction/Installation 
 for alternative installations -->
@@ -20,6 +21,7 @@ for alternative installations -->
 <script src="https://unpkg.com/three@0.139.2/examples/js/controls/DragControls.js"></script>
 <script src="https://unpkg.com/three@0.139.2/examples/js/geometries/TeapotGeometry.js"></script>
 <script src="https://unpkg.com/three@0.139.2/examples/js/loaders/OBJLoader.js"></script>
+<script src="https://unpkg.com/three@0.139.2/examples/js/loaders/MTLLoader.js"></script>
 
 <script>
     // Your existing code...
@@ -29,6 +31,11 @@ for alternative installations -->
         if (event.code === 'KeyA') {
             console.log('KeyA pressed');
             document.getElementById('fileInput').click();
+        }
+        if (event.code === 'KeyI') {
+            // load textures
+            document.getElementById('fileInputTexture').click();
+
         }
     });
 
@@ -51,6 +58,32 @@ for alternative installations -->
             reader.readAsText(file);
         }
     });
+    document.getElementById('fileInputTexture').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file && SelectedObject) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const contents = e.target.result;
+
+            const mtlLoader = new THREE.MTLLoader();
+            mtlLoader.setPath(''); // Specify the folder containing zapato.png
+            mtlLoader.load('zapato.mtl', (mtl) => {
+                mtl.preload();
+                const material = mtl.materials[Object.keys(mtl.materials)[0]];
+                if (material) {
+                    SelectedObject.traverse((child) => {
+                        if (child.isMesh) {
+                            child.material = material;
+                        }
+                    });
+                }
+            });
+        };
+        reader.readAsText(file);
+    }
+});
+
+
 </script>
 
 <script>
@@ -138,6 +171,7 @@ var displaySurfaces, displaySurfaceScene, displaySurfaceTargets;
 var eyeCenter, eyeScene; 
 var orbitControl;
 var showScene = true;
+var SelectedObject = null;
 
 function addDragControlToObjects()
 {
@@ -162,6 +196,7 @@ function addDragControlToObjects()
 	controls.addEventListener( 'dragstart', function ( event ) 
 		{
             event.object.material.emissive.set( 0xaaaaaa );
+            SelectedObject = event.object;
         } );
     controls.addEventListener( 'dragend', function ( event ) 
 		{
