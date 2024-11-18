@@ -8,8 +8,9 @@
 <body>
 <div id="info">
 	CAVE Simulator. The head and teapot are draggable. <br />
-	"L" See from Left Eye | "R" See from Right Eye | "S" toggle show scene  <br />
+	"L" See from Left Eye | "R" See from Right Eye | "S" toggle show scene | "A" add obj to scene  <br />
 </div>
+<input type="file" id="fileInput" accept=".obj" style="display: none;" />
 
 <!-- Check: https://threejs.org/docs/index.html#manual/en/introduction/Installation 
 for alternative installations -->
@@ -18,6 +19,39 @@ for alternative installations -->
 <script src="https://unpkg.com/three@0.139.2/examples/js/controls/OrbitControls.js"></script>
 <script src="https://unpkg.com/three@0.139.2/examples/js/controls/DragControls.js"></script>
 <script src="https://unpkg.com/three@0.139.2/examples/js/geometries/TeapotGeometry.js"></script>
+<script src="https://unpkg.com/three@0.139.2/examples/js/loaders/OBJLoader.js"></script>
+
+<script>
+    // Your existing code...
+
+    document.addEventListener('keydown', function(event) {
+        console.log(event.code);
+        if (event.code === 'KeyA') {
+            console.log('KeyA pressed');
+            document.getElementById('fileInput').click();
+        }
+    });
+
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const contents = e.target.result;
+                const objLoader = new THREE.OBJLoader();
+                const object = objLoader.parse(contents);
+                object.scale.set(1, 1, 1);
+                object.name = interactableNewobjects.length.toString();
+                object.position.set(0, 0, 0);
+
+                scene.add(object);
+                interactableNewobjects.push(scene.getObjectByName(object.name));
+                addDragControlToObjects();
+            };
+            reader.readAsText(file);
+        }
+    });
+</script>
 
 <script>
 class DisplaySurface 
@@ -99,6 +133,7 @@ class DisplaySurface
 
 
 var renderer, scene, camera;
+var interactableNewobjects = [];
 var displaySurfaces, displaySurfaceScene, displaySurfaceTargets;
 var eyeCenter, eyeScene; 
 var orbitControl;
@@ -109,6 +144,9 @@ function addDragControlToObjects()
     var objects = [];
     objects.push(scene.getObjectByName("Teapot"));
     objects.push(eyeScene.getObjectByName("Head"));
+    objects = objects.concat(interactableNewobjects);
+    console.log(objects);
+    // objects.push(scene.getObjectByName("hand"));
     
 	//console.log(objects); 
 	
@@ -202,7 +240,20 @@ function createScene()
     teapot.position.z-=70;
     teapot.rotation.y = Math.PI / 2;
     scene.add( teapot );
-                
+
+    // const objLoader = new THREE.OBJLoader();
+    // objLoader.load('zapatolow.obj', (root) => {
+    //     root.scale.set(20, 20, 20);
+    //     scene.add(root);
+    // });
+
+    // geometry = new THREE.BoxGeometry( 10, 10, 10 );
+    // material = new THREE.MeshPhongMaterial( { color: 0xaaaaaa } );
+    // var hand = new THREE.Mesh( geometry, material );
+    // hand.name = "hand";
+    // hand.position.set(0,0,0);
+    // scene.add(hand);   
+
     createLights(scene);
 }
 
@@ -401,9 +452,19 @@ window.addEventListener( 'keydown', function ( event )
                 console.log("Floor:");
                 proj = displaySurfaces[3].projectionMatrix(new THREE.Vector3(50,20,100), .1, 100);
                 printMatrix(proj);
-
 				break;
-                
+            // case 'KeyA':
+            //     const objLoader = new THREE.OBJLoader();
+            //     objLoader.load('zapatolow.obj', (root) => {
+            //         root.scale.set(1, 1, 1);
+            //         root.name = interactableNewobjects.length.toString();
+            //         root.position.set(0,0,0);
+                    
+            //         scene.add(root);
+            //         interactableNewobjects.push(scene.getObjectByName(root.name));
+            //         addDragControlToObjects();
+            //     });
+            // break;
                     
 }
 });
