@@ -1,0 +1,12 @@
+# Blender 4.2.2 LTS MTL File: 'zapato.blend'
+# www.blender.org
+
+newmtl Default_OBJ.001
+Ns 160.000031
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd zapato.png
