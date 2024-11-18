@@ -15,12 +15,13 @@
 for alternative installations -->
 
 <script src="https://unpkg.com/three@0.139.2/build/three.min.js"></script>
+<script src="VRButton.js"></script>
 <script src="https://unpkg.com/three@0.139.2/examples/js/controls/OrbitControls.js"></script>
 <script src="https://unpkg.com/three@0.139.2/examples/js/controls/DragControls.js"></script>
 <script src="https://unpkg.com/three@0.139.2/examples/js/geometries/TeapotGeometry.js"></script>
 
 <script>
-class DisplaySurface 
+    class DisplaySurface
 {
     constructor(name, origin, u_vector, v_vector) 
     {
@@ -169,9 +170,14 @@ function createEyeScene()
 
 function createRenderer()
 {
-    renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true});
+    renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true, antialias: true});
     renderer.autoClear = false;
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setAnimationLoop(animate);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.shadowMap.enabled = true;
+    renderer.xr.enabled = true;
+    renderer.xr.cameraAutoUpdate = false;
     document.body.appendChild(renderer.domElement);
 }
 
@@ -318,13 +324,14 @@ function cameraFromViewProj(view, proj)
 }
 
 // refresh function
-var animate = function () {
+function animate () {
     var gl = renderer.getContext();
     requestAnimationFrame(animate);
 
     // 1. render scene objects
 	renderer.setClearColor(0x808080);
     renderer.clear();
+    renderer.xr.updateCamera(camera);
     if (showScene)
         renderer.render(scene, camera);
     
@@ -412,6 +419,10 @@ function printMatrix(matrix) {
     `);
 }
 
+function setupControllers() {
+    var controller1 = renderer.xr.        
+}
+
 createRenderer();  			// create WebGL renderer
 createDisplaySurfaces();	// Display surfaces
 createDisplaySurfaceTargets(); // Textures for the display surfaces
@@ -421,8 +432,9 @@ createScene();		// some objects to test (teapot...)
 createCamera();		// a third-person camera
 enableOrbitCamera(camera, renderer);  // basic camera control
 addDragControlToObjects();	// allow some objects to be dragged
-animate();
+//animate();
 
+document.body.appendChild( VRButton.createButton( renderer ) );
 
 		</script>
     </body>
