@@ -385,17 +385,23 @@ window.addEventListener( 'keydown', function ( event )
                 break;
 				
 			case 'KeyT':
-				// var viewF = displaySurfaces[0].viewMatrix(new THREE.Vector3(50,20,100));
-				var viewL = displaySurfaces[1].viewMatrix(new THREE.Vector3(50,20,100));
-				var viewL2 = displaySurfaces[1].viewMatrix(new THREE.Vector3(10,10,10));
-				// var viewR = displaySurfaces[2].viewMatrix(new THREE.Vector3(50,20,100));
-				// var viewB = displaySurfaces[3].viewMatrix(new THREE.Vector3(50,20,100));
 				console.log("View matrices:");
-				// printMatrix(viewF);
-				printMatrix(viewL);
-				printMatrix(viewL2);
-				// printMatrix(viewR);
-				// printMatrix(viewB);
+				console.log("Front:");
+                var proj = displaySurfaces[0].projectionMatrix(new THREE.Vector3(50,20,100), .1, 100);
+				printMatrix(proj);
+                
+                console.log("Left:");
+                proj = displaySurfaces[1].projectionMatrix(new THREE.Vector3(50,20,100), .1, 100);
+                printMatrix(proj);
+
+                console.log("Right:");
+                proj = displaySurfaces[2].projectionMatrix(new THREE.Vector3(50,20,100), .1, 100);
+                printMatrix(proj);
+
+                console.log("Floor:");
+                proj = displaySurfaces[3].projectionMatrix(new THREE.Vector3(50,20,100), .1, 100);
+                printMatrix(proj);
+
 				break;
                 
                     
