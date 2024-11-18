@@ -64,10 +64,11 @@ for alternative installations -->
         const reader = new FileReader();
         reader.onload = function(e) {
             const contents = e.target.result;
+            const filename = file.name;
 
             const mtlLoader = new THREE.MTLLoader();
-            mtlLoader.setPath(''); // Specify the folder containing zapato.png
-            mtlLoader.load('zapato.mtl', (mtl) => {
+            mtlLoader.setPath(''); // Specify the folder containing the .mtl file
+            mtlLoader.load(filename, (mtl) => {
                 mtl.preload();
                 const material = mtl.materials[Object.keys(mtl.materials)[0]];
                 if (material) {
